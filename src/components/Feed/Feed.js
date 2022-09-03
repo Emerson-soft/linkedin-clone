@@ -29,7 +29,7 @@ function Feed() {
 
   const sendPost = e => {
     e.preventDefault();
-    console.log("caiu")
+
     db.collection('posts').add({
       name: 'Emerson Mendonça',
       description: 'this is a test',
@@ -37,7 +37,6 @@ function Feed() {
       photoUrl: 'https://avatars.githubusercontent.com/u/42453905?v=4',
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
-
   }
 
   return (
