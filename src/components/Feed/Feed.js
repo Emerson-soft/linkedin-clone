@@ -11,13 +11,17 @@ import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay'
 import InputOptions from '../InputOptions/InputOptions'
 import Post from '../Post/Post'
 import { db } from '../../service/firebase'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../../features/userSlice'
 
 function Feed() {
   const [input, setInput] = useState('')
   const [posts, setPosts] = useState([])
 
+  const user = useSelector(selectUser)
+
   useEffect(() => {
-    db.collection("posts").onSnapshot(snapshot => (
+    db.collection("posts").orderBy('timestamp' ,'desc').onSnapshot(snapshot => (
       setPosts(snapshot.docs.map(doc => (
         {
           id: doc.id,
@@ -29,14 +33,16 @@ function Feed() {
 
   const sendPost = e => {
     e.preventDefault();
-
+    const time = new Date()
     db.collection('posts').add({
-      name: 'Emerson Mendonça',
-      description: 'this is a test',
+      name: user.displayName,
+      description: time.toString(),
       message: input,
-      photoUrl: 'https://avatars.githubusercontent.com/u/42453905?v=4',
+      photoUrl: user.profileUrl,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
+
+    setInput("")
   }
 
   return (
@@ -59,7 +65,7 @@ function Feed() {
       {posts.map(({ id, data }) => (
         <Post
           key={id}
-          name={data.name} 
+          name={data.name}
           description={data.description}
           message={data.message}
           photoUrl={data.photoUrl}
